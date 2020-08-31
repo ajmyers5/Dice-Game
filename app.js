@@ -27,56 +27,63 @@ GAME RULES:
 */
 
 // setting up variables
-var scores, roundScore, activePlayer;
+var scores, roundScore, activePlayer, gamePlaying;
 
 init();
 
 document.querySelector(".btn-roll").addEventListener("click", function () {
-  // 1. need random #
-  var dice = Math.floor(Math.random() * 6) + 1;
+  if (gamePlaying) {
+    // 1. need random #
+    var dice = Math.floor(Math.random() * 6) + 1;
 
-  // 2. display result that is also tied to correct # and img
-  var diceDOM = document.querySelector(".dice");
-  diceDOM.style.display = "block";
-  diceDOM.src = "dice-" + dice + ".png";
+    // 2. display result that is also tied to correct # and img
+    var diceDOM = document.querySelector(".dice");
+    diceDOM.style.display = "block";
+    diceDOM.src = "dice-" + dice + ".png";
 
-  // 3. update round score IF the rolled number was NOT 1
+    // 3. update round score IF the rolled number was NOT 1
 
-  if (dice !== 1) {
-    //Add score
-    roundScore += dice; // same as writing roundScore = roundScore + dice
-    document.querySelector("#current-" + activePlayer).textContent = roundScore;
-  } else {
-    //Next player -> use ternary operator!
-    nextPlayer();
+    if (dice !== 1) {
+      //Add score
+      roundScore += dice; // same as writing roundScore = roundScore + dice
+      document.querySelector(
+        "#current-" + activePlayer
+      ).textContent = roundScore;
+    } else {
+      //Next player -> use ternary operator!
+      nextPlayer();
+    }
   }
 });
 
 // adjusting game so HOLD BTN functions
 document.querySelector(".btn-hold").addEventListener("click", function () {
-  // 1. add CURRENT score to GLOBAL score
-  scores[activePlayer] += roundScore; // same as scores[activePlayer] = scores[activePlayer] + roundScore;
+  if (gamePlaying) {
+    // 1. add CURRENT score to GLOBAL score
+    scores[activePlayer] += roundScore; // same as scores[activePlayer] = scores[activePlayer] + roundScore;
 
-  // 2. Update UI
-  document.querySelector("#score-" + activePlayer).textContent =
-    scores[activePlayer];
+    // 2. Update UI
+    document.querySelector("#score-" + activePlayer).textContent =
+      scores[activePlayer];
 
-  // 3. check if player won game
-  if (scores[activePlayer] >= 20) {
-    document.querySelector("#name-" + activePlayer).textContent = "Winner!!";
-    document.querySelector(".dice").style.display = "none";
-    document
-      .querySelector(".player-" + activePlayer + "-panel")
-      .classList.add("winner");
-    document
-      .querySelector(".player-" + activePlayer + "-panel")
-      .classList.remove("active");
-    // trying to remove the "winner" css shit
-    // document
-    //   .querySelector(".player-" + activePlayer + "-panel")
-    //   .classList.remove("winner");
-  } else {
-    nextPlayer();
+    // 3. check if player won game
+    if (scores[activePlayer] >= 20) {
+      document.querySelector("#name-" + activePlayer).textContent = "Winner!!";
+      document.querySelector(".dice").style.display = "none";
+      document
+        .querySelector(".player-" + activePlayer + "-panel")
+        .classList.add("winner");
+      document
+        .querySelector(".player-" + activePlayer + "-panel")
+        .classList.remove("active");
+      gamePlaying = false;
+      // trying to remove the "winner" css shit
+      // document
+      //   .querySelector(".player-" + activePlayer + "-panel")
+      //   .classList.remove("winner");
+    } else {
+      nextPlayer();
+    }
   }
 });
 
@@ -104,6 +111,7 @@ function init() {
   scores = [0, 0];
   activePlayer = 0;
   roundScore = 0;
+  gamePlaying = true;
 
   // setting dice img to 'none'
   document.querySelector(".dice").style.display = "none";
